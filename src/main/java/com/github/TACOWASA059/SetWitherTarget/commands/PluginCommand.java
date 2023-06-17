@@ -28,14 +28,16 @@ public class PluginCommand implements CommandExecutor {
                 Player player1= Bukkit.getPlayer(player_name);
                 if(player1==null){
                     player.sendMessage(ChatColor.RED+"正しいMCIDを入力して下さい。");
+                    return true;
                 }
                 SetWitherTarget.plugin.getConfig().set("MCID",player_name);
+                SetWitherTarget.plugin.saveConfig();
                 player.sendMessage(ChatColor.GREEN+"ターゲットは"+ChatColor.AQUA+ SetWitherTarget.plugin.getConfig().getString("MCID")+ChatColor.GREEN+"に変更されました。");
             }
             else if (args.length==1&&args[0].equalsIgnoreCase("usage")){
                 player.sendMessage(ChatColor.LIGHT_PURPLE+"-------------------");
                 player.sendMessage(ChatColor.GREEN+"/WitherCommand getTarget : ターゲットのMCIDを取得");
-                player.sendMessage(ChatColor.GREEN+"/WitherCommand setTarget MCID : ターゲットをMCIDに設定");
+                player.sendMessage(ChatColor.GREEN+"/WitherCommand setTarget MCID : ターゲットのMCIDを設定");
                 player.sendMessage(ChatColor.GREEN+"/WitherCommand usage : コマンド使用法の表示");
                 player.sendMessage(ChatColor.LIGHT_PURPLE+"-------------------");
             }
