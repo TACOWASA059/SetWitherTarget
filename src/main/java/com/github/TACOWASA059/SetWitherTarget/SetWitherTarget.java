@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.UUID;
 
 public final class SetWitherTarget extends JavaPlugin {
@@ -31,25 +32,38 @@ public final class SetWitherTarget extends JavaPlugin {
         getCommand("WitherCommand").setTabCompleter(new PluginCommandCompleter());
     }
     private void initHashSet(){
+        int count=0;
         for(World world: Bukkit.getWorlds()){
             for(Entity entity:Bukkit.getWorld(world.getName()).getEntities()){
-                if(entity.getType()== EntityType.WITHER)addSet(entity.getUniqueId());
+                if(entity.getType()== EntityType.WITHER){
+                    addSet(entity.getUniqueId());
+                    Mob mob = (Mob) entity;
+                    if (mob != null) {
+                        mob.setTarget(Bukkit.getPlayer(SetWitherTarget.plugin.getConfig().getString("MCID")));
+                    }
+                    count++;
+                }
             }
         }
+        System.out.println(count+" withers were added to set.");
     }
     private void repeatingTask(){
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(SetWitherTarget.plugin, ()->{
-                for (UUID uuid:entityset) {
-                    Entity entity=Bukkit.getEntity(uuid);
-                    if(entity==null) {
-                        entityset.remove(uuid);
-                        continue;
-                    }
-                    if (entity.getType() == EntityType.WITHER) {
-                        Mob mob = (Mob) entity;
-                        if (mob != null) mob.setTarget(Bukkit.getPlayer(SetWitherTarget.plugin.getConfig().getString("MCID")));
+            Iterator<UUID> iterator = entityset.iterator();
+            while (iterator.hasNext()) {
+                UUID uuid = iterator.next();
+                Entity entity = Bukkit.getEntity(uuid);
+                if (entity == null) {
+                    iterator.remove();
+                    continue;
+                }
+                if (entity.getType() == EntityType.WITHER) {
+                    Mob mob = (Mob) entity;
+                    if (mob != null) {
+                        mob.setTarget(Bukkit.getPlayer(SetWitherTarget.plugin.getConfig().getString("MCID")));
                     }
                 }
+            }
             }, 0L, 5L);
     }
     public void addSet(UUID uuid){
