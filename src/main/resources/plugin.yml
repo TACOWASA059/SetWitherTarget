@@ -1,0 +1,7 @@
+name: SetWitherTarget
+version: '${project.version}'
+main: com.github.TACOWASA059.SetWitherTarget.SetWitherTarget
+api-version: 1.16
+commands:
+  withercommand:
+    usage:
